@@ -65,7 +65,8 @@ module Text.ParserCombinators.MTLParse.MTLParseCore (
 
 ) where
 
-import Control.Monad        ( MonadPlus, mplus, mzero, liftM     )
+import Control.Applicative  ( Applicative(..)                    )
+import Control.Monad        ( MonadPlus, mplus, mzero, liftM, ap )
 import Control.Monad.Trans  ( MonadTrans( lift ),
                               MonadIO, liftIO                    )
 import Control.Monad.Reader ( MonadReader( ask, local ),
@@ -122,6 +123,9 @@ newtype Parse a b
 
 instance Functor ( Parse p ) where
   fmap f m = Parse $ liftM ( first f ) . runParse m
+
+instance Applicative ( Parse p ) where
+  pure = return; (<*>) = ap
 
 instance Monad ( Parse a ) where
   return = Parse . \val inp -> [ (val, inp) ]

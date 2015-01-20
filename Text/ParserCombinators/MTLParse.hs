@@ -47,7 +47,7 @@ module Text.ParserCombinators.MTLParse (
 ) where
 
 import Text.ParserCombinators.MTLParse.MTLParseCore
-import Control.Monad( replicateM, liftM )
+import Control.Monad( replicateM )
 
 tokens, tokensBack :: ( Eq a, MonadParse a m ) => [ a ] -> m [ a ]
 tokens     = foldr ( (>:>).token     ) $ return []
