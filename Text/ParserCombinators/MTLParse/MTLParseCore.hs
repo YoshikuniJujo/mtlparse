@@ -65,7 +65,7 @@ module Text.ParserCombinators.MTLParse.MTLParseCore (
 
 ) where
 
-import Control.Applicative  ( Applicative(..)                    )
+import Control.Applicative  ( Applicative(..), Alternative(..)   )
 import Control.Monad        ( MonadPlus, mplus, mzero, liftM, ap )
 import Control.Monad.Trans  ( MonadTrans( lift ),
                               MonadIO, liftIO                    )
@@ -126,6 +126,10 @@ instance Functor ( Parse p ) where
 
 instance Applicative ( Parse p ) where
   pure = return; (<*>) = ap
+
+instance Alternative (Parse p ) where
+  empty = mzero
+  (<|>) = mplus
 
 instance Monad ( Parse a ) where
   return = Parse . \val inp -> [ (val, inp) ]
@@ -189,6 +193,13 @@ instance Monad m => Functor ( ParseT a m ) where
   fmap f m = ParseT $ \a -> do
                rets <- runParseT m a
 	       return [ ( f a', rst ) | ( a', rst ) <- rets ]
+
+instance Monad m => Applicative ( ParseT a m ) where
+  pure = return; (<*>) = ap
+
+instance Monad m => Alternative (ParseT a m ) where
+  empty = mzero
+  (<|>) = mplus
 
 instance Monad m => Monad ( ParseT a m ) where
   return b = ParseT $ \a -> return [ (b, a) ]
